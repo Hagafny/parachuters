@@ -1,1 +1,1 @@
-"# parachuters-game" 
+Retro Parachuters game with HTML5 Canvas
