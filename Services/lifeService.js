@@ -35,7 +35,8 @@ Parachuters.Services = Parachuters.Services || {};
         function loseLife() {
             if (_currentLives > 0) // Prevent Lives from reaching minus values.
             _currentLives--;
-            else if (_currentLives == 0) // No more lives.
+            
+            if (_currentLives == 0) // No more lives.
                 raiseGameOver();
         }
 
