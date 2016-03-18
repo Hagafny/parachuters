@@ -19,7 +19,7 @@ Parachuters.Components = Parachuters.Components || {};
         this.height = settings.height;
         this.x = settings.x;
         this.y = settings.y;
-        
+
         this.image = new Image();
         this.image.src = settings.img;
     }
@@ -27,9 +27,9 @@ Parachuters.Components = Parachuters.Components || {};
     // This function will run inside our gameLoop. We pass in the canvas' context.
     BaseComponent.prototype.draw = function (ctx) {
         ctx.drawImage(this.image,
-          this.x,
-          this.y,
-          this.width, this.height);
+            this.x,
+            this.y,
+            this.width, this.height);
     }
 
     Parachuters.Components.BaseComponent = BaseComponent;

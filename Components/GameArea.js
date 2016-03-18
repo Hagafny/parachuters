@@ -11,7 +11,7 @@ Parachuters.Components = Parachuters.Components || {};
     function GameArea(canvasDimensions) {
         this.canvas;
         this.context;
-        
+
         initialize.call(this);
 
         function initialize() {
@@ -20,7 +20,7 @@ Parachuters.Components = Parachuters.Components || {};
 
         //create a canvas dom element and append to the body.
         function setupCanvas() {
-            this.canvas = document.createElement("canvas"); 
+            this.canvas = document.createElement("canvas");
             this.canvas.width = canvasDimensions.width;
             this.canvas.height = canvasDimensions.height;
             this.canvas.style.cursor = "none"; //hide the original cursor

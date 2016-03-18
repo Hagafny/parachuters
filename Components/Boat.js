@@ -12,7 +12,7 @@ Parachuters.Components = Parachuters.Components || {};
 
         // Get boat stats
         settings.stats = settings.stats || {};
-        this.speed = settings.stats.speed || 5;
+        this.speed = settings.stats.speed || 3;
 
         // Call the base component's constructor to valiate our inputs.
         Parachuters.Components.BaseComponent.call(this, settings);

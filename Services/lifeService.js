@@ -5,11 +5,12 @@ Parachuters.Services = Parachuters.Services || {};
     var LifeService = function () {
         var initialLives = 3;  // Initial lives the player has.
         var _currentLives; // a private that holds the player's current lives.
-
+        var gameOverEvent;
         initialize();
 
         function initialize() {
-            bindEvents();
+            subscribeToEvents();
+            createEvents();
             _currentLives = initialLives;
         }
 
@@ -24,7 +25,10 @@ Parachuters.Services = Parachuters.Services || {};
             return _currentLives;
         }
 
-        function bindEvents() {
+        function createEvents() {
+            gameOverEvent = new CustomEvent("gameOver");
+        }
+        function subscribeToEvents() {
             document.body.addEventListener("hitsWater", loseLife, false); //Listen to the hitsWater event and fire a loseLife function.
         }
 
@@ -39,13 +43,12 @@ Parachuters.Services = Parachuters.Services || {};
         // If I didn't put a setTimeout here, the game will be over with the "Lives: 1" text.
         function raiseGameOver() {
             setTimeout(function () {
-                var gameOver = new CustomEvent("gameOver");
-                document.body.dispatchEvent(gameOver);
-            }, 100) 
+
+                document.body.dispatchEvent(gameOverEvent);
+            }, 100)
 
         }
     }
 
     Parachuters.Services.LifeService = LifeService;
-
 })()

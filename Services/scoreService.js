@@ -8,7 +8,7 @@ Parachuters.Services = Parachuters.Services || {};
         initialize();
 
         function initialize() {
-            bindEvents();
+            listenToEventsEvents();
         }
 
         // the only thing the service returns is a get method for the _score variable.
@@ -22,7 +22,7 @@ Parachuters.Services = Parachuters.Services || {};
             return _score;
         }
 
-        function bindEvents() {
+        function listenToEventsEvents() {
             document.body.addEventListener("hitsBoat", addScore, false); //Listen to the hitsBoat event and fire an addScore function.
         }
 
@@ -34,5 +34,4 @@ Parachuters.Services = Parachuters.Services || {};
     }
 
     Parachuters.Services.ScoreService = ScoreService;
-
 })()

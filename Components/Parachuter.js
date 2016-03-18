@@ -24,10 +24,10 @@ Parachuters.Components = Parachuters.Components || {};
         initialize.call(this);
 
         function initialize() {
-            bindEvents.call(this);
+            createEvents.call(this);
         }
 
-        function bindEvents() {
+        function createEvents() {
             hitsBoat = new CustomEvent("hitsBoat", { 'detail': this });
             hitsWater = new CustomEvent("hitsWater", { 'detail': this });
         }
@@ -46,9 +46,9 @@ Parachuters.Components = Parachuters.Components || {};
         // check if the parachuter collided with an object. return true or flase.
         function landsOn(otherobj) {
             return (this.x < otherobj.x + otherobj.width &&
-                    this.x + this.width > otherobj.x &&
-                    this.y < otherobj.y + otherobj.height &&
-                    this.height + this.y > otherobj.y)
+                this.x + this.width > otherobj.x &&
+                this.y < otherobj.y + otherobj.height &&
+                this.height + this.y > otherobj.y)
 
         }
 
