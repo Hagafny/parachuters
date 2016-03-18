@@ -1,0 +1,23 @@
+{
+  "name": "parachuters-game",
+  "version": "1.0.0",
+  "description": "Simple parachuter game made with HTML5 Canvas",
+  "main": "gameManager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Pashtidot@github.com/Pashtidot/parachuters-game.git"
+  },
+  "author": "Ron Hagafny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pashtidot/parachuters-game/issues"
+  },
+  "homepage": "https://github.com/Pashtidot/parachuters-game#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
