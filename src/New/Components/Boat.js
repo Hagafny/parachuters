@@ -15,7 +15,7 @@ export default class Boat extends BaseComponent {
          
         //Validate
         if (settings.gameWidth == undefined)
-            throw Error("Invalid settings for boat component");
+            throw Error("Invalid settings for Boat component");
 
         this.gameWidth = settings.gameWidth;
 

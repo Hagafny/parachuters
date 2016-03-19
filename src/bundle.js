@@ -58,6 +58,10 @@
 
 	var _Boat2 = _interopRequireDefault(_Boat);
 
+	var _Plane = __webpack_require__(6);
+
+	var _Plane2 = _interopRequireDefault(_Plane);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var gameWidth = 800,
@@ -68,6 +72,7 @@
 	var background = new _BaseComponent2.default(getBackgorundSettings());
 	var water = new _BaseComponent2.default(getWaterSettings());
 	var boat = new _Boat2.default(getBoatSettings());
+	var plane = new _Plane2.default(getPlaneSettings());
 
 	var gameLoopInterval = void 0;
 	initializeGame();
@@ -108,8 +113,8 @@
 	    boat.update(); // update the behavior of the boat
 	    boat.draw(gameArea.context); // redraw the boat
 
-	    //    plane.update(); // update the behavior of the plane
-	    //    plane.draw(gameArea.context); // redraw the plane
+	    plane.update(); // update the behavior of the plane
+	    plane.draw(gameArea.context); // redraw the plane
 	}
 
 	function getBackgorundSettings() {
@@ -128,6 +133,11 @@
 	    boatSettings.x = gameWidth - boatSettings.width;
 	    boatSettings.y = gameHeight - water.height - boatSettings.height;
 	    return boatSettings;
+	}
+
+	function getPlaneSettings() {
+	    var planeSettings = { width: 80, height: 80, y: 0, x: 0, image: "img/plane.png", gameWidth: gameWidth };
+	    return planeSettings;
 	}
 
 /***/ },
@@ -300,7 +310,7 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Boat).call(this, settings));
 
-	        if (settings.gameWidth == undefined) throw Error("Invalid settings for boat component");
+	        if (settings.gameWidth == undefined) throw Error("Invalid settings for Boat component");
 
 	        _this.gameWidth = settings.gameWidth;
 
@@ -1938,6 +1948,175 @@
 	Number.prototype.clamp = function (min, max) {
 	    return Math.min(Math.max(this, min), max);
 	};
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _BaseComponent2 = __webpack_require__(2);
+
+	var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
+
+	var _underscore = __webpack_require__(4);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * The plane component. In charge of plane movement pattern and calculating parachuters drop points
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @class Plane
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @constructor
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+
+	//deploymentXLocations holds the x coordinates in which the plane drops parachuters. It resets every time the plane completes a cycle.
+	var deploymentXLocations = [],
+	    planeFinishedCycleEvent = void 0,
+	    parachuterDroppedEvent = void 0;
+
+	var Plane = function (_BaseComponent) {
+	    _inherits(Plane, _BaseComponent);
+
+	    function Plane(settings, stats) {
+	        _classCallCheck(this, Plane);
+
+	        //Validate
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Plane).call(this, settings));
+
+	        if (settings.gameWidth == undefined) throw Error("Invalid settings for Plane component");
+
+	        stats = stats || {};
+	        _this.speed = stats.speed || 3;
+	        _this.parachutersPerCycle = stats.parachutersPerCycle || 1;
+	        _this.gameWidth = settings.gameWidth;
+
+	        // settings.x = getNewPlaneLocation.call(this);
+
+	        _this.x = _this.getNewPlaneLocation();
+	        _this.setDeploymentLocations();
+	        _this.createEvents();
+	        _this.subscribeToEvents();
+
+	        return _this;
+	    }
+
+	    _createClass(Plane, [{
+	        key: "update",
+	        value: function update() {
+	            //When the plane hits an x location that is inside the deploymentXLocations, he will drop a parachuter.
+	            if (_underscore2.default.contains(deploymentXLocations, this.x)) this.dropParachuter();
+
+	            if (this.hasFinishedCycle()) {
+	                document.body.dispatchEvent(planeFinishedCycleEvent);
+	            }
+	            //If the plane didn't finish a cycle, move left.
+	            else this.moveLeft();
+	        }
+	    }, {
+	        key: "moveLeft",
+	        value: function moveLeft() {
+	            this.x -= this.speed;
+	        }
+	    }, {
+	        key: "setDeploymentLocations",
+	        value: function setDeploymentLocations() {
+	            for (var i = 0; i < this.parachutersPerCycle; i++) {
+	                //We generate a random number between 0 and the canvas' width. We multiply (and then divide) by the speed of the plane.
+	                //This is needed to make sure that the plane will actually hit those x locations. If the speed of the plane is 3, we will need randomXlocations that can be divided by 3.
+	                var deploymentLocation = Math.floor(Math.random() * this.gameWidth / this.speed) * this.speed;
+	                deploymentXLocations.push(deploymentLocation);
+	            }
+	        }
+
+	        //called when plane has finished a cycle. we pass the plane 'this' reference so we can use it inside the event listener.
+
+	    }, {
+	        key: "createEvents",
+	        value: function createEvents() {
+	            planeFinishedCycleEvent = new CustomEvent("planeFinishedCycle", { 'detail': this });
+	        }
+
+	        //We are listening to our own event because several services are listerning to planeFinishedCycle event as well.
+
+	    }, {
+	        key: "subscribeToEvents",
+	        value: function subscribeToEvents() {
+	            document.body.addEventListener("planeFinishedCycle", this.planeFinishedCycle, false);
+	        }
+
+	        //If the plane has finished a cycle, we will clean the deploymentXLocations array, reset the plane position to the right of the screen and calculate deplyment x locations again.      
+
+	    }, {
+	        key: "planeFinishedCycle",
+	        value: function planeFinishedCycle(e) {
+	            var planeInstance = e.detail;
+
+	            deploymentXLocations = [];
+	            planeInstance.restartPlaneLocation();
+	            planeInstance.setDeploymentLocations();
+	        }
+
+	        //Checkes if the plane has fully left the canvas area.
+
+	    }, {
+	        key: "hasFinishedCycle",
+	        value: function hasFinishedCycle() {
+	            return this.x < -this.width;
+	        }
+
+	        // After the plane has crossed the canvas to the left, teleport him to the right.
+
+	    }, {
+	        key: "restartPlaneLocation",
+	        value: function restartPlaneLocation() {
+	            this.x = this.getNewPlaneLocation();
+	        }
+
+	        //When a parachuter dros, we call an event to be catched by other services that will handle it.
+
+	    }, {
+	        key: "dropParachuter",
+	        value: function dropParachuter() {
+	            var parachuterDropped = new CustomEvent("parachuterDropped", { 'detail': this.x });
+	            document.body.dispatchEvent(parachuterDropped);
+	        }
+
+	        // This functions returns an xLocation for which the plane is teleported to the right of the canvas. Distance is a random number between zero and the canvas' width.
+	        // We use distance to simulate the "time" it takes the plane to get back to the screen.
+	        // Also, we have to make sure the plane will start at a coordinate that is divided by the speed. This is to make sure the plane will hit all his deploymentXLocations.
+	        // This is why we run a while loop until we generate a location that can can be divided by the plane's speedn./
+
+	    }, {
+	        key: "getNewPlaneLocation",
+	        value: function getNewPlaneLocation() {
+	            var distance;
+	            do {
+	                distance = Math.floor(Math.random() * this.gameWidth);
+	            } while ((this.gameWidth + distance) % this.speed != 0);
+
+	            return this.gameWidth + distance;
+	        }
+	    }]);
+
+	    return Plane;
+	}(_BaseComponent3.default);
+
+	exports.default = Plane;
 
 /***/ }
 /******/ ]);

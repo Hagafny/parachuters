@@ -1,6 +1,7 @@
 import GameArea from "./New/Components/GameArea";
 import BaseComponent from "./New/Components/BaseComponent";
 import Boat from "./New/Components/Boat";
+import Plane from "./New/Components/Plane"
 
 const gameWidth = 800, gameHeight = 600, FPS = 60;
 const gameArea = new GameArea(gameWidth, gameHeight);
@@ -8,7 +9,7 @@ const gameArea = new GameArea(gameWidth, gameHeight);
 const background = new BaseComponent(getBackgorundSettings());
 const water = new BaseComponent(getWaterSettings());
 const boat = new Boat(getBoatSettings());
-
+const plane = new Plane(getPlaneSettings());
 
 let gameLoopInterval;
 initializeGame();
@@ -55,8 +56,8 @@ function gameLoop() {
     boat.update(); // update the behavior of the boat
     boat.draw(gameArea.context); // redraw the boat
 
-    //    plane.update(); // update the behavior of the plane
-    //    plane.draw(gameArea.context); // redraw the plane
+    plane.update(); // update the behavior of the plane
+    plane.draw(gameArea.context); // redraw the plane
 
 }
 
@@ -77,4 +78,9 @@ function getBoatSettings() {
     boatSettings.x = gameWidth - boatSettings.width;
     boatSettings.y = gameHeight - water.height - boatSettings.height;
     return boatSettings;
+}
+
+function getPlaneSettings() {
+    var planeSettings = { width: 80, height: 80, y: 0, x: 0, image: "img/plane.png", gameWidth: gameWidth };
+    return planeSettings;
 }
