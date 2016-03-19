@@ -169,8 +169,4 @@ Parachuters.Components = Parachuters.Components || {};
     function getLivesText() {
         return "LIVES: " + lifeService.getCurrentLives();
     }
-
-
-
-
 })()
