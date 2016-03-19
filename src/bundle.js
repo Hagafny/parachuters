@@ -50,45 +50,76 @@
 
 	var _GameArea2 = _interopRequireDefault(_GameArea);
 
-	var _BaseComponent = __webpack_require__(2);
+	var _TextComponent = __webpack_require__(2);
+
+	var _TextComponent2 = _interopRequireDefault(_TextComponent);
+
+	var _BaseComponent = __webpack_require__(3);
 
 	var _BaseComponent2 = _interopRequireDefault(_BaseComponent);
 
-	var _Boat = __webpack_require__(3);
+	var _Boat = __webpack_require__(4);
 
 	var _Boat2 = _interopRequireDefault(_Boat);
 
-	var _Plane = __webpack_require__(6);
+	var _Plane = __webpack_require__(7);
 
 	var _Plane2 = _interopRequireDefault(_Plane);
 
+	var _Parachuter = __webpack_require__(8);
+
+	var _Parachuter2 = _interopRequireDefault(_Parachuter);
+
+	var _LevelService = __webpack_require__(9);
+
+	var _LevelService2 = _interopRequireDefault(_LevelService);
+
+	var _LifeService = __webpack_require__(10);
+
+	var _LifeService2 = _interopRequireDefault(_LifeService);
+
+	var _ScoreService = __webpack_require__(11);
+
+	var _ScoreService2 = _interopRequireDefault(_ScoreService);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var gameWidth = 800,
+	var levelService = new _LevelService2.default(),
+	    lifeService = new _LifeService2.default(),
+	    scoreService = new _ScoreService2.default(),
+	    gameWidth = 800,
 	    gameHeight = 600,
-	    FPS = 60;
-	var gameArea = new _GameArea2.default(gameWidth, gameHeight);
+	    FPS = 60,
+	    gameArea = new _GameArea2.default(gameWidth, gameHeight),
+	    background = new _BaseComponent2.default(getBackgorundSettings()),
+	    water = new _BaseComponent2.default(getWaterSettings()),
+	    boat = new _Boat2.default(getBoatSettings()),
+	    plane = new _Plane2.default(getPlaneSettings()),
+	    levelText = new _TextComponent2.default(getLevelTextSettings()),
+	    lifeText = new _TextComponent2.default(getLifeTextSettings()),
+	    scoreText = new _TextComponent2.default(getScoreTextSetting());
 
-	var background = new _BaseComponent2.default(getBackgorundSettings());
-	var water = new _BaseComponent2.default(getWaterSettings());
-	var boat = new _Boat2.default(getBoatSettings());
-	var plane = new _Plane2.default(getPlaneSettings());
+	var gameLoopInterval = void 0,
+	    parachuters = [],
+	    cyclesPerLevel = 1,
+	    // Amount of plane cycles needed to level up.
+	planeCycles = 0; // Plane cycle counter;
 
-	var gameLoopInterval = void 0;
 	initializeGame();
 
 	function initializeGame() {
 	    subscribeToEvents();
-	    setServices();
-	    createComponents();
 	    startGameLoop();
 	}
 
-	function subscribeToEvents() {}
-
-	function setServices() {}
-
-	function createComponents() {}
+	/* register to the events the game will shout at us */
+	function subscribeToEvents() {
+	    document.body.addEventListener("gameOver", stopGame, false);
+	    document.body.addEventListener("parachuterDropped", dropParachuter, false);
+	    document.body.addEventListener("hitsBoat", removeParachuter, false);
+	    document.body.addEventListener("hitsWater", removeParachuter, false);
+	    document.body.addEventListener("planeFinishedCycle", planeFinishedCycle, false);
+	}
 
 	function startGameLoop() {
 	    gameLoopInterval = setInterval(gameLoop, 1000 / FPS);
@@ -101,25 +132,66 @@
 	    background.draw(gameArea.context);
 	    water.draw(gameArea.context);
 
-	    //     levelText.text = getLevelText();
-	    //     levelText.draw(gameArea.context);
-	    //
-	    //     scoreText.text = getScoreText();
-	    //     scoreText.draw(gameArea.context);
-	    //
-	    //     lifeText.text = getLivesText();
-	    //     lifeText.draw(gameArea.context);
+	    levelText.text = getLevelText();
+	    levelText.draw(gameArea.context);
+
+	    scoreText.text = getScoreText();
+	    scoreText.draw(gameArea.context);
+
+	    lifeText.text = getLivesText();
+	    lifeText.draw(gameArea.context);
 
 	    boat.update(); // update the behavior of the boat
 	    boat.draw(gameArea.context); // redraw the boat
 
 	    plane.update(); // update the behavior of the plane
 	    plane.draw(gameArea.context); // redraw the plane
+
+	    // We might have more than 1 parachuter in the game. Iterate over every parachuter.
+	    for (var i = 0; i < parachuters.length; i++) {
+	        parachuters[i].update(); // update the behavior of the parachuter. Notice that inside the update function, we might call 'hitsX' and essentially remove the parachuter from the game.
+
+	        if (parachuters[i]) // at this point, the parachuters might not be at the parachuters array because they hit the boat/water. If he's not, he will be null and we will stop drawing it.
+	            parachuters[i].draw(gameArea.context);
+	    }
+	}
+
+	// Stop the game when it's game over. This will make the screen freeze.
+	function stopGame() {
+	    clearInterval(gameLoopInterval);
+	}
+
+	// This is called when we successfully catch a 'parachuterDropped' event that is fired from the Plane object. This creates an instance of a parachuter and adds it to the parachuters array
+	function dropParachuter(e) {
+	    parachuters.push(new _Parachuter2.default({
+	        id: parachuters.length - 1,
+	        width: 50,
+	        height: 50,
+	        y: 0,
+	        image: "img/parachuter.png",
+	        x: e.detail,
+	        water: water, //We need a reference to the water object to detect collision
+	        boat: boat }));
+	}
+
+	// This is called when we successfully catch a 'hitsBoat' or 'hitsWater' event that is fired from the parachuter object. We remove the parachuter from the parachuters array.
+	// Once it is removed from the array, it will disappear with the next gameArea.clear() call.
+	//We need a reference to the boat object to detect collision
+	function removeParachuter(e) {
+	    parachuters.splice(e.detail.id, 1);
+	}
+
+	function planeFinishedCycle() {
+	    planeCycles++;
+	    if (planeCycles % cyclesPerLevel == 0) {
+	        levelService.levelUp();
+	        plane.parachutersPerCycle = levelService.level;
+	    }
 	}
 
 	function getBackgorundSettings() {
-
-	    return { width: gameWidth, height: gameHeight, x: 0, y: 0, image: "img/background.jpg" };
+	    var backgroundSettings = { width: gameWidth, height: gameHeight, x: 0, y: 0, image: "img/background.jpg" };
+	    return backgroundSettings;
 	}
 
 	function getWaterSettings() {
@@ -138,6 +210,36 @@
 	function getPlaneSettings() {
 	    var planeSettings = { width: 80, height: 80, y: 0, x: 0, image: "img/plane.png", gameWidth: gameWidth };
 	    return planeSettings;
+	}
+
+	function getLevelTextSettings() {
+	    var levelTextSettings = { x: 0, y: gameHeight / 3 };
+	    return levelTextSettings;
+	}
+
+	function getLifeTextSettings() {
+	    var lifeTextSettings = { x: 0, y: levelText.y + 40 };
+	    return lifeTextSettings;
+	}
+
+	function getScoreTextSetting() {
+	    var scoreTextSettings = { x: 0, y: lifeText.y + 40 };
+	    return scoreTextSettings;
+	}
+
+	//Returns the level text
+	function getLevelText() {
+	    return "LEVEL: " + levelService.level;
+	}
+
+	//Returns the lives text
+	function getLivesText() {
+	    return "LIVES: " + lifeService.lives;
+	}
+
+	//Returns the score text
+	function getScoreText() {
+	    return "SCORE: " + scoreService.score;
 	}
 
 /***/ },
@@ -219,6 +321,55 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
+	* This text component is used by Levels, Score and Lives to display the stats.
+	*
+	* @class Text
+	* @constructor
+	*/
+
+	var TextComponent = function () {
+	    function TextComponent(settings) {
+	        _classCallCheck(this, TextComponent);
+
+	        //Validate
+	        if (settings.x == undefined || settings.y == undefined) throw Error("Invalid settings for Text component");
+
+	        this.x = settings.x;
+	        this.y = settings.y;
+	        this.color = settings.color || "#000";
+	        this.text = settings.text || "";
+	        this.font = settings.font || "20px Georgia";;
+	    }
+
+	    _createClass(TextComponent, [{
+	        key: "draw",
+	        value: function draw(canvasContext) {
+	            canvasContext.fillStyle = this.color;
+	            canvasContext.font = this.font;
+	            canvasContext.fillText(this.text, this.x, this.y);
+	        }
+	    }]);
+
+	    return TextComponent;
+	}();
+
+	exports.default = TextComponent;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
 	* This is the Base Component. This is used as a parent constructor and contains the draw function our components run inside the gameLoop.
 	*
 	* @class BaseComponent
@@ -261,7 +412,7 @@
 	exports.default = BaseComponent;
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -272,15 +423,15 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _BaseComponent2 = __webpack_require__(2);
+	var _BaseComponent2 = __webpack_require__(3);
 
 	var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-	var _underscore = __webpack_require__(4);
+	var _underscore = __webpack_require__(5);
 
 	var _underscore2 = _interopRequireDefault(_underscore);
 
-	__webpack_require__(5);
+	__webpack_require__(6);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -347,14 +498,12 @@
 	    }, {
 	        key: "moveLeft",
 	        value: function moveLeft() {
-	            //  this.x -= this.speed;
-	            this.x -= 3;
+	            this.x -= this.speed;
 	        }
 	    }, {
 	        key: "moveRight",
 	        value: function moveRight() {
-	            //  this.x += this.speed;
-	            this.x += 3;
+	            this.x += this.speed;
 	        }
 	    }, {
 	        key: "x",
@@ -375,7 +524,7 @@
 	exports.default = Boat;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
@@ -1929,7 +2078,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1950,7 +2099,7 @@
 	};
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1961,11 +2110,11 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _BaseComponent2 = __webpack_require__(2);
+	var _BaseComponent2 = __webpack_require__(3);
 
 	var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-	var _underscore = __webpack_require__(4);
+	var _underscore = __webpack_require__(5);
 
 	var _underscore2 = _interopRequireDefault(_underscore);
 
@@ -2004,14 +2153,10 @@
 	        _this.speed = stats.speed || 3;
 	        _this.parachutersPerCycle = stats.parachutersPerCycle || 1;
 	        _this.gameWidth = settings.gameWidth;
-
-	        // settings.x = getNewPlaneLocation.call(this);
-
 	        _this.x = _this.getNewPlaneLocation();
+
 	        _this.setDeploymentLocations();
 	        _this.createEvents();
-	        _this.subscribeToEvents();
-
 	        return _this;
 	    }
 
@@ -2023,6 +2168,7 @@
 
 	            if (this.hasFinishedCycle()) {
 	                document.body.dispatchEvent(planeFinishedCycleEvent);
+	                this.planeFinishedCycle();
 	            }
 	            //If the plane didn't finish a cycle, move left.
 	            else this.moveLeft();
@@ -2051,24 +2197,14 @@
 	            planeFinishedCycleEvent = new CustomEvent("planeFinishedCycle", { 'detail': this });
 	        }
 
-	        //We are listening to our own event because several services are listerning to planeFinishedCycle event as well.
-
-	    }, {
-	        key: "subscribeToEvents",
-	        value: function subscribeToEvents() {
-	            document.body.addEventListener("planeFinishedCycle", this.planeFinishedCycle, false);
-	        }
-
 	        //If the plane has finished a cycle, we will clean the deploymentXLocations array, reset the plane position to the right of the screen and calculate deplyment x locations again.      
 
 	    }, {
 	        key: "planeFinishedCycle",
-	        value: function planeFinishedCycle(e) {
-	            var planeInstance = e.detail;
-
+	        value: function planeFinishedCycle() {
 	            deploymentXLocations = [];
-	            planeInstance.restartPlaneLocation();
-	            planeInstance.setDeploymentLocations();
+	            this.restartPlaneLocation();
+	            this.setDeploymentLocations();
 	        }
 
 	        //Checkes if the plane has fully left the canvas area.
@@ -2117,6 +2253,281 @@
 	}(_BaseComponent3.default);
 
 	exports.default = Plane;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _BaseComponent2 = __webpack_require__(3);
+
+	var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * The parachuter component.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @class Parachuter
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @constructor
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+
+	//declare the events.
+	var hitsBoat = void 0,
+	    hitsWater = void 0;
+
+	var Plane = function (_BaseComponent) {
+	    _inherits(Plane, _BaseComponent);
+
+	    function Plane(settings, stats) {
+	        _classCallCheck(this, Plane);
+
+	        //Validate
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Plane).call(this, settings));
+
+	        if (settings.water == undefined || settings.boat == undefined) throw Error("Invalid settings for Parachuter component");
+
+	        stats = stats || {};
+	        _this.speed = stats.speed || 2;
+	        _this.reward = stats.reward || 10;
+	        _this.water = settings.water;
+	        _this.boat = settings.boat;
+
+	        _this.createEvents();
+	        return _this;
+	    }
+
+	    _createClass(Plane, [{
+	        key: "update",
+	        value: function update() {
+	            this.y += this.speed;
+
+	            if (this.landsOn(this.boat)) document.body.dispatchEvent(hitsBoat); //raise the hitsBoat event
+
+	            if (this.landsOn(this.water)) document.body.dispatchEvent(hitsWater); //raise the hitsWater event.      
+	        }
+	    }, {
+	        key: "createEvents",
+	        value: function createEvents() {
+	            hitsBoat = new CustomEvent("hitsBoat", { 'detail': this });
+	            hitsWater = new CustomEvent("hitsWater", { 'detail': this });
+	        }
+
+	        // check if the parachuter collided with an object. return true or flase.
+
+	    }, {
+	        key: "landsOn",
+	        value: function landsOn(otherobj) {
+	            return this.x < otherobj.x + otherobj.width && this.x + this.width > otherobj.x && this.y < otherobj.y + otherobj.height && this.height + this.y > otherobj.y;
+	        }
+	    }]);
+
+	    return Plane;
+	}(_BaseComponent3.default);
+
+	exports.default = Plane;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	* In charge of levels
+	*
+	* @class LevelService
+	* @constructor
+	*/
+	var s_level = Symbol();
+
+	var LevelService = function () {
+	    function LevelService() {
+	        _classCallCheck(this, LevelService);
+
+	        var initialLevel = 1;
+	        this[s_level] = initialLevel;
+	    }
+
+	    _createClass(LevelService, [{
+	        key: "levelUp",
+	        value: function levelUp() {
+	            this[s_level]++;
+	        }
+	    }, {
+	        key: "level",
+	        get: function get() {
+	            return this[s_level];
+	        }
+	    }]);
+
+	    return LevelService;
+	}();
+
+	exports.default = LevelService;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	* In charge of lives
+	*
+	* @class LifeService
+	* @constructor
+	*/
+
+	var s_currentLives = Symbol(),
+	    gameOverEvent = void 0;
+
+	var LifeService = function () {
+	    function LifeService() {
+	        _classCallCheck(this, LifeService);
+
+	        var initialLives = 3;
+	        this[s_currentLives] = initialLives;
+
+	        this.subscribeToEvents();
+	        this.createEvents();
+	    }
+
+	    _createClass(LifeService, [{
+	        key: "createEvents",
+	        value: function createEvents() {
+	            gameOverEvent = new CustomEvent("gameOver");
+	        }
+	    }, {
+	        key: "subscribeToEvents",
+	        value: function subscribeToEvents() {
+	            var _this = this;
+
+	            document.body.addEventListener("hitsWater", function () {
+	                _this.loseLife();
+	            }, false); //Listen to the hitsWater event and fire a loseLife function.
+	        }
+	    }, {
+	        key: "loseLife",
+	        value: function loseLife() {
+	            if (this.lives > 0) // Prevent Lives from reaching minus values.
+	                this[s_currentLives]--;
+
+	            if (this.lives == 0) // No more lives.
+	                this.raiseGameOver();
+	        }
+
+	        // This will raise the gameOver event and essentially finish the game. Notice that I put a setTimeout because I want the frames to the changes the lives to 0 before the game ends.
+	        // If I didn't put a setTimeout here, the game will be over with the "Lives: 1" text.
+
+	    }, {
+	        key: "raiseGameOver",
+	        value: function raiseGameOver() {
+	            setTimeout(function () {
+	                document.body.dispatchEvent(gameOverEvent);
+	            }, 100);
+	        }
+	    }, {
+	        key: "lives",
+	        get: function get() {
+	            return this[s_currentLives];
+	        }
+	    }]);
+
+	    return LifeService;
+	}();
+
+	exports.default = LifeService;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	* In charge of score
+	*
+	* @class ScoreService
+	* @constructor
+	*/
+
+	var s_score = Symbol();
+
+	var ScoreService = function () {
+	    function ScoreService() {
+	        _classCallCheck(this, ScoreService);
+
+	        this[s_score] = 0;
+
+	        this.listenToEvents();
+	    }
+
+	    _createClass(ScoreService, [{
+	        key: "listenToEvents",
+	        value: function listenToEvents() {
+	            var _this = this;
+
+	            document.body.addEventListener("hitsBoat", function (e) {
+	                _this.addScore(e.detail.reward);
+	            }, false); //Listen to the hitsBoat event and fire an addScore function.
+	        }
+
+	        //We add a score based on the 'reward' property the caught parachuter has.
+
+	    }, {
+	        key: "addScore",
+	        value: function addScore(reward) {
+	            this[s_score] += reward;
+	        }
+	    }, {
+	        key: "score",
+	        get: function get() {
+	            return this[s_score];
+	        }
+	    }]);
+
+	    return ScoreService;
+	}();
+
+	exports.default = ScoreService;
 
 /***/ }
 /******/ ]);

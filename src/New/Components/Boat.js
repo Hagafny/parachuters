@@ -58,13 +58,11 @@ export default class Boat extends BaseComponent {
     }
 
     moveLeft() {
-        //  this.x -= this.speed;
-        this.x -= 3;
+          this.x -= this.speed;
     }
 
     moveRight() {
-        //  this.x += this.speed;
-        this.x += 3;
+          this.x += this.speed;
     }
 
 }

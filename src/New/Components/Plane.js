@@ -13,9 +13,9 @@ let deploymentXLocations = [],
     parachuterDroppedEvent;
 
 export default class Plane extends BaseComponent {
+
     constructor(settings, stats) {
         super(settings);
-
         //Validate
         if (settings.gameWidth == undefined)
             throw Error("Invalid settings for Plane component");
@@ -24,14 +24,10 @@ export default class Plane extends BaseComponent {
         this.speed = stats.speed || 3;
         this.parachutersPerCycle = stats.parachutersPerCycle || 1;
         this.gameWidth = settings.gameWidth;
-        
-        // settings.x = getNewPlaneLocation.call(this);
-        
-        this.x = this.getNewPlaneLocation();   
+        this.x = this.getNewPlaneLocation();
+
         this.setDeploymentLocations();
         this.createEvents();
-        this.subscribeToEvents();
-
     }
 
     update() {
@@ -41,6 +37,7 @@ export default class Plane extends BaseComponent {
 
         if (this.hasFinishedCycle()) {
             document.body.dispatchEvent(planeFinishedCycleEvent);
+            this.planeFinishedCycle();
         }
         //If the plane didn't finish a cycle, move left. 
         else
@@ -64,19 +61,12 @@ export default class Plane extends BaseComponent {
     createEvents() {
         planeFinishedCycleEvent = new CustomEvent("planeFinishedCycle", { 'detail': this });
     }
-
-    //We are listening to our own event because several services are listerning to planeFinishedCycle event as well.
-    subscribeToEvents() {
-        document.body.addEventListener("planeFinishedCycle", this.planeFinishedCycle, false);
-    }
     
     //If the plane has finished a cycle, we will clean the deploymentXLocations array, reset the plane position to the right of the screen and calculate deplyment x locations again.       
-    planeFinishedCycle(e) {
-        let planeInstance = e.detail;
-
+    planeFinishedCycle() {
         deploymentXLocations = [];
-        planeInstance.restartPlaneLocation();
-        planeInstance.setDeploymentLocations();
+        this.restartPlaneLocation();
+        this.setDeploymentLocations();
     }
     
     //Checkes if the plane has fully left the canvas area.
