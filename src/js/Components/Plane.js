@@ -9,8 +9,7 @@ import "./../misc/extensions"; //For the clamp/contains extensions
 
 //deploymentXLocations holds the x coordinates in which the plane drops parachuters. It resets every time the plane completes a cycle.
 let deploymentXLocations = [],
-    planeFinishedCycleEvent,
-    parachuterDroppedEvent;
+    planeFinishedCycleEvent;
 
 export default class Plane extends BaseComponent {
 

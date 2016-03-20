@@ -1,11 +1,15 @@
 var path = require('path');
 var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: "./src/game.js",
+    entry: {
+        game: "./src/game.js"
+    },
+
     output: {
-        path: __dirname + "/src/",
-        filename: "bundle.js"
+        path: __dirname + "/dist/",
+        filename: "[name].bundle.js"
     },
     module: {
         preLoaders: [
@@ -24,11 +28,22 @@ module.exports = {
                     presets: ['es2015']
                 }
             },
-            { test: /\.css$/, loader: "style!css" }
+            {
+                test: /\.css$/,
+                loader: "style!css"
+            },
+            {
+                test: /\.(png|jpg)$/,
+                loader: 'url-loader?limit=5000&name=img/img-[hash:6].[ext]'
+            } // inline base64 URLs for <=5k images, direct URLs for the rest           
         ]
     },
-    watch: true,
     jshint: {
         esversion: 6
-    }
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: "Parachuters"
+        })
+    ]
 };

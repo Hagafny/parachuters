@@ -99,7 +99,7 @@ function dropParachuter(e) {
             width: 50,
             height: 50,
             y: 0,
-            image: "img/parachuter.png",
+            image: require('./img/parachuter.png'),
             x: e.detail,
             water: water, //We need a reference to the water object to detect collision
             boat: boat, //We need a reference to the boat object to detect collision
@@ -123,26 +123,26 @@ function planeFinishedCycle() {
 }
 
 function getBackgorundSettings() {
-    let backgroundSettings = { width: gameWidth, height: gameHeight, x: 0, y: 0, image: "img/background.jpg" };
+    let backgroundSettings = { width: gameWidth, height: gameHeight, x: 0, y: 0, image: require('./img/background.jpg')};
     return backgroundSettings;
 }
 
 function getWaterSettings() {
-    let waterSettings = { width: gameWidth, height: gameHeight / 3, x: 0, image: "img/water.jpg" };
+    let waterSettings = { width: gameWidth, height: gameHeight / 3, x: 0, image: require('./img/water.jpg') };
     waterSettings.y = gameHeight - waterSettings.height;
     return waterSettings;
 
 }
 
 function getBoatSettings() {
-    let boatSettings = { width: 110, height: 55, image: "img/boat.png", gameWidth: gameWidth };
+    let boatSettings = { width: 110, height: 55, image: require('./img/boat.png'), gameWidth: gameWidth };
     boatSettings.x = gameWidth - boatSettings.width;
     boatSettings.y = gameHeight - water.height - boatSettings.height;
     return boatSettings;
 }
 
 function getPlaneSettings() {
-    let planeSettings = { width: 80, height: 80, y: 0, x: 0, image: "img/plane.png", gameWidth: gameWidth };
+    let planeSettings = { width: 80, height: 80, y: 0, x: 0, image: require('./img/plane.png'), gameWidth: gameWidth };
     return planeSettings;
 }
 
