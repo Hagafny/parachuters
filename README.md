@@ -26,7 +26,7 @@ Parachuters itself is open source with a [public repository][para]
 
 ```sh
 $ git clone https://github.com/Pashtidot/parachuters.git
-$ cd parachuters-game
+$ cd parachuters
 $ npm install -d
 $ npm run prod
 $ npm start
