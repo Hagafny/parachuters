@@ -18,7 +18,6 @@ export default class GameArea {
         this[s_canvas] = document.createElement("canvas");
         this[s_canvas].width = width;
         this[s_canvas].height = height;
-        this[s_canvas].style.cursor = "none"; //hide the original cursor -> move to css.
         this._context = this[s_canvas].getContext("2d");
         document.body.insertBefore(this[s_canvas], document.body.childNodes[0]); //Append the canvas dom object as the first child of the body elemnt
     }

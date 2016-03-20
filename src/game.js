@@ -1,14 +1,17 @@
-import GameArea from "./New/Components/GameArea";
-import TextComponent from "./New/Components/TextComponent";
-import BaseComponent from "./New/Components/BaseComponent";
-import Boat from "./New/Components/Boat";
-import Plane from "./New/Components/Plane"
-import Parachuter from "./New/Components/Parachuter";
+import "./css/style.css";
 
 
-import LevelService from "./New/Services/LevelService";
-import LifeService from "./New/Services/LifeService";
-import ScoreService from "./New/Services/ScoreService";
+import GameArea from "./js/Components/GameArea";
+import TextComponent from "./js/Components/TextComponent";
+import BaseComponent from "./js/Components/BaseComponent";
+import Boat from "./js/Components/Boat";
+import Plane from "./js/Components/Plane"
+import Parachuter from "./js/Components/Parachuter";
+
+
+import LevelService from "./js/Services/LevelService";
+import LifeService from "./js/Services/LifeService";
+import ScoreService from "./js/Services/ScoreService";
 
 const levelService = new LevelService(),
     lifeService = new LifeService(),
@@ -22,6 +25,7 @@ const levelService = new LevelService(),
     water = new BaseComponent(getWaterSettings()),
     boat = new Boat(getBoatSettings()),
     plane = new Plane(getPlaneSettings()),
+
     levelText = new TextComponent(getLevelTextSettings()),
     lifeText = new TextComponent(getLifeTextSettings()),
     scoreText = new TextComponent(getScoreTextSetting());
@@ -29,7 +33,7 @@ const levelService = new LevelService(),
 let gameLoopInterval,
     parachuters = [],
     cyclesPerLevel = 1, // Amount of plane cycles needed to level up.
-    planeCycles = 0; // Plane cycle counter;
+    planeCycles = 3; // Plane cycle counter;
 
 
 initializeGame();
@@ -115,7 +119,7 @@ function removeParachuter(e) {
 function planeFinishedCycle() {
     planeCycles++;
     if (planeCycles % cyclesPerLevel == 0) {
-        levelService.levelUp(); 
+        levelService.levelUp();
         plane.parachutersPerCycle = levelService.level;
     }
 }
