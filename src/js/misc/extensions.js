@@ -1,4 +1,3 @@
-
 /**
 * Returns a number whose value is limited to the given range.
 *
@@ -12,4 +11,28 @@
 */
 Number.prototype.clamp = function (min, max) {
     return Math.min(Math.max(this, min), max);
+};
+
+/**
+* Returns whether an array contains the argument element or not
+*
+* @param {object} the needle element to check
+* @returns whether an array contains the argument element or not
+* @type Bool;
+*/
+Array.prototype.contains = function (element) {
+  var arrayLength = this.length;
+  for (let i = 0; i < arrayLength; i++) {
+      if (this[i] == element) {
+          return true;
+      }
+  }
+  return false;
+};
+
+/**
+* Returns the last element of an array.
+*/
+Array.prototype.last = function () {
+  return this[this.length-1];
 };

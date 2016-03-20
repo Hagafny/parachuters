@@ -5,7 +5,7 @@
 * @constructor
 */
 import BaseComponent from "./BaseComponent";
-import _ from "underscore";
+import "./../misc/extensions"; //For the clamp/contains extensions
 
 //deploymentXLocations holds the x coordinates in which the plane drops parachuters. It resets every time the plane completes a cycle.
 let deploymentXLocations = [],
@@ -32,7 +32,7 @@ export default class Plane extends BaseComponent {
 
     update() {
         //When the plane hits an x location that is inside the deploymentXLocations, he will drop a parachuter.
-        if (_.contains(deploymentXLocations, this.x))
+        if (deploymentXLocations.contains(this.x))
             this.dropParachuter();
 
         if (this.hasFinishedCycle()) {

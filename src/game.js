@@ -1,13 +1,11 @@
 import "./css/style.css";
 
-
 import GameArea from "./js/Components/GameArea";
 import TextComponent from "./js/Components/TextComponent";
 import BaseComponent from "./js/Components/BaseComponent";
 import Boat from "./js/Components/Boat";
 import Plane from "./js/Components/Plane"
 import Parachuter from "./js/Components/Parachuter";
-
 
 import LevelService from "./js/Services/LevelService";
 import LifeService from "./js/Services/LifeService";
@@ -32,8 +30,8 @@ const levelService = new LevelService(),
 
 let gameLoopInterval,
     parachuters = [],
-    cyclesPerLevel = 1, // Amount of plane cycles needed to level up.
-    planeCycles = 3; // Plane cycle counter;
+    cyclesPerLevel = 3, // Amount of plane cycles needed to level up.
+    planeCycles = 0; // Plane cycle counter;
 
 
 initializeGame();

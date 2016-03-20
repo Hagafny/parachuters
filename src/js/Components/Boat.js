@@ -5,8 +5,7 @@
 * @constructor
 */
 import BaseComponent from "./BaseComponent";
-import _ from "underscore";
-import "./../misc/extensions"; //For the clamp function
+import "./../misc/extensions"; //For the clamp/contains extensions
 
 let keysPressed = [];
 export default class Boat extends BaseComponent {
@@ -31,12 +30,12 @@ export default class Boat extends BaseComponent {
     
     //Clamp the boat's location to the width of the canvas.
     set x(newX) {
-        this._x = this.gameWidth ? newX.clamp(0, this.gameWidth - this.width) : newX;  
+        this._x = this.gameWidth ? newX.clamp(0, this.gameWidth - this.width) : newX;
     }
 
     //We always move the both with the last key that is held down. We also make sure to clamp the x position of the boat so we won't get off screen.
     update() {
-        let lastKeyPressed = _.last(keysPressed);
+        let lastKeyPressed = keysPressed.last();
         if (lastKeyPressed == 37)
             this.moveLeft();
 
@@ -46,23 +45,27 @@ export default class Boat extends BaseComponent {
 
     bindKeys() {
         window.addEventListener('keydown', e => {
-            if (!_.contains(keysPressed, e.keyCode))
+            if (!keysPressed.contains(e.keyCode))
                 keysPressed.push(e.keyCode);
         })
 
         window.addEventListener('keyup', e=> {
-            var index = _.indexOf(keysPressed, e.keyCode);
+            var index = keysPressed.indexOf(e.keyCode);
             if (index != -1)
                 keysPressed.splice(index, 1);
         })
     }
 
     moveLeft() {
-          this.x -= this.speed;
+      //  console.log(keysPressed);
+        this.x -= this.speed;
+        //console.log(this.x);
     }
 
     moveRight() {
-          this.x += this.speed;
+     //   console.log(this.speed);
+        this.x += this.speed;
+      //  console.log(this.x);
     }
 
 }
