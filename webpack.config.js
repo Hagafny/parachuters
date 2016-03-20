@@ -8,10 +8,17 @@ module.exports = {
         filename: "bundle.js"
     },
     module: {
+        preLoaders: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'jshint-loader',
+            }
+        ],
         loaders: [
             {
                 test: /\.js$/,
-                include: path.join(__dirname, 'src'),
+                exclude: /node_modules/,
                 loader: 'babel-loader',
                 query: {
                     presets: ['es2015']
@@ -19,5 +26,9 @@ module.exports = {
             },
             { test: /\.css$/, loader: "style!css" }
         ]
+    },
+    watch: true,
+    jshint: {
+        esversion: 6
     }
 };

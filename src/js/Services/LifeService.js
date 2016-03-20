@@ -25,14 +25,14 @@ export default class LifeService {
         gameOverEvent = new CustomEvent("gameOver");
     }
     subscribeToEvents() {
-        document.body.addEventListener("hitsWater", () => { this.loseLife() }, false); //Listen to the hitsWater event and fire a loseLife function.
+        document.body.addEventListener("hitsWater", () => { this.loseLife(); }, false); //Listen to the hitsWater event and fire a loseLife function.
     }
 
     loseLife() {
         if (this.lives > 0) // Prevent Lives from reaching minus values.
             this[s_currentLives]--;
 
-        if (this.lives == 0) // No more lives.
+        if (this.lives === 0) // No more lives.
             this.raiseGameOver();
     }
         
@@ -41,6 +41,6 @@ export default class LifeService {
     raiseGameOver() {
         setTimeout(function () {
             document.body.dispatchEvent(gameOverEvent);
-        }, 100)
+        }, 100);
     }
 }

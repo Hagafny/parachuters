@@ -13,10 +13,10 @@ export default class Plane extends BaseComponent {
         super(settings);
 
         //Validate
-        if (settings.water == undefined || settings.boat == undefined)
+        if (settings.water === undefined || settings.boat === undefined)
             throw Error("Invalid settings for Parachuter component");
 
-        stats = stats || {}
+        stats = stats || {};
         this.speed = stats.speed || 2;
         this.reward = stats.reward || 10;
         this.water = settings.water;
@@ -45,7 +45,6 @@ export default class Plane extends BaseComponent {
         return (this.x < otherobj.x + otherobj.width &&
             this.x + this.width > otherobj.x &&
             this.y < otherobj.y + otherobj.height &&
-            this.height + this.y > otherobj.y)
+            this.height + this.y > otherobj.y);
     }
 }
-

@@ -64,23 +64,23 @@
 
 	var _Boat2 = _interopRequireDefault(_Boat);
 
-	var _Plane = __webpack_require__(11);
+	var _Plane = __webpack_require__(10);
 
 	var _Plane2 = _interopRequireDefault(_Plane);
 
-	var _Parachuter = __webpack_require__(12);
+	var _Parachuter = __webpack_require__(11);
 
 	var _Parachuter2 = _interopRequireDefault(_Parachuter);
 
-	var _LevelService = __webpack_require__(13);
+	var _LevelService = __webpack_require__(12);
 
 	var _LevelService2 = _interopRequireDefault(_LevelService);
 
-	var _LifeService = __webpack_require__(14);
+	var _LifeService = __webpack_require__(13);
 
 	var _LifeService2 = _interopRequireDefault(_LifeService);
 
-	var _ScoreService = __webpack_require__(15);
+	var _ScoreService = __webpack_require__(14);
 
 	var _ScoreService2 = _interopRequireDefault(_ScoreService);
 
@@ -185,7 +185,7 @@
 
 	function planeFinishedCycle() {
 	    planeCycles++;
-	    if (planeCycles % cyclesPerLevel == 0) {
+	    if (planeCycles % cyclesPerLevel === 0) {
 	        levelService.levelUp();
 	        plane.parachutersPerCycle = levelService.level;
 	    }
@@ -655,7 +655,6 @@
 	}();
 
 	exports.default = GameArea;
-	;
 
 /***/ },
 /* 6 */
@@ -683,13 +682,13 @@
 	        _classCallCheck(this, TextComponent);
 
 	        //Validate
-	        if (settings.x == undefined || settings.y == undefined) throw Error("Invalid settings for Text component");
+	        if (settings.x === undefined || settings.y === undefined) throw Error("Invalid settings for Text component");
 
 	        this.x = settings.x;
 	        this.y = settings.y;
 	        this.color = settings.color || "#000";
 	        this.text = settings.text || "";
-	        this.font = settings.font || "20px Georgia";;
+	        this.font = settings.font || "20px Georgia";
 	    }
 
 	    _createClass(TextComponent, [{
@@ -732,7 +731,7 @@
 	        _classCallCheck(this, BaseComponent);
 
 	        // Validate
-	        if (settings.width == undefined || settings.height == undefined || settings.x == undefined || settings.y == undefined || settings.image == undefined) throw Error("Invalid settings for component");
+	        if (settings.width === undefined || settings.height === undefined || settings.x === undefined || settings.y === undefined || settings.image === undefined) throw Error("Invalid settings for component");
 
 	        this.width = settings.width;
 	        this.height = settings.height;
@@ -778,7 +777,7 @@
 
 	var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-	__webpack_require__(10);
+	__webpack_require__(9);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -808,7 +807,7 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Boat).call(this, settings));
 
-	        if (settings.gameWidth == undefined) throw Error("Invalid settings for Boat component");
+	        if (settings.gameWidth === undefined) throw Error("Invalid settings for Boat component");
 
 	        _this.gameWidth = settings.gameWidth;
 
@@ -845,16 +844,12 @@
 	    }, {
 	        key: "moveLeft",
 	        value: function moveLeft() {
-	            //  console.log(keysPressed);
 	            this.x -= this.speed;
-	            //console.log(this.x);
 	        }
 	    }, {
 	        key: "moveRight",
 	        value: function moveRight() {
-	            //   console.log(this.speed);
 	            this.x += this.speed;
-	            //  console.log(this.x);
 	        }
 	    }, {
 	        key: "x",
@@ -875,8 +870,7 @@
 	exports.default = Boat;
 
 /***/ },
-/* 9 */,
-/* 10 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -921,7 +915,7 @@
 	};
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -936,7 +930,7 @@
 
 	var _BaseComponent3 = _interopRequireDefault(_BaseComponent2);
 
-	__webpack_require__(10);
+	__webpack_require__(9);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -969,7 +963,7 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Plane).call(this, settings));
 
-	        if (settings.gameWidth == undefined) throw Error("Invalid settings for Plane component");
+	        if (settings.gameWidth === undefined) throw Error("Invalid settings for Plane component");
 
 	        stats = stats || {};
 	        _this.speed = stats.speed || 3;
@@ -1065,7 +1059,7 @@
 	            var distance;
 	            do {
 	                distance = Math.floor(Math.random() * this.gameWidth);
-	            } while ((this.gameWidth + distance) % this.speed != 0);
+	            } while ((this.gameWidth + distance) % this.speed !== 0);
 
 	            return this.gameWidth + distance;
 	        }
@@ -1077,7 +1071,7 @@
 	exports.default = Plane;
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1120,7 +1114,7 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Plane).call(this, settings));
 
-	        if (settings.water == undefined || settings.boat == undefined) throw Error("Invalid settings for Parachuter component");
+	        if (settings.water === undefined || settings.boat === undefined) throw Error("Invalid settings for Parachuter component");
 
 	        stats = stats || {};
 	        _this.speed = stats.speed || 2;
@@ -1163,7 +1157,7 @@
 	exports.default = Plane;
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1210,7 +1204,7 @@
 	exports.default = LevelService;
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1264,7 +1258,7 @@
 	            if (this.lives > 0) // Prevent Lives from reaching minus values.
 	                this[s_currentLives]--;
 
-	            if (this.lives == 0) // No more lives.
+	            if (this.lives === 0) // No more lives.
 	                this.raiseGameOver();
 	        }
 
@@ -1291,7 +1285,7 @@
 	exports.default = LifeService;
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports) {
 
 	"use strict";

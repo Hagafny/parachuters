@@ -13,12 +13,12 @@ export default class Boat extends BaseComponent {
         super(settings);
          
         //Validate
-        if (settings.gameWidth == undefined)
+        if (settings.gameWidth === undefined)
             throw Error("Invalid settings for Boat component");
 
         this.gameWidth = settings.gameWidth;
 
-        stats = stats || {}
+        stats = stats || {};
         this.speed = stats.speed || 3;
 
         this.bindKeys();
@@ -47,25 +47,21 @@ export default class Boat extends BaseComponent {
         window.addEventListener('keydown', e => {
             if (!keysPressed.contains(e.keyCode))
                 keysPressed.push(e.keyCode);
-        })
+        });
 
         window.addEventListener('keyup', e=> {
             var index = keysPressed.indexOf(e.keyCode);
             if (index != -1)
                 keysPressed.splice(index, 1);
-        })
+        });
     }
 
     moveLeft() {
-      //  console.log(keysPressed);
         this.x -= this.speed;
-        //console.log(this.x);
     }
 
     moveRight() {
-     //   console.log(this.speed);
         this.x += this.speed;
-      //  console.log(this.x);
     }
 
 }

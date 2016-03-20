@@ -30,5 +30,5 @@ export default class GameArea {
     clear() {
         this.context.clearRect(0, 0, this[s_canvas].width, this[s_canvas].height);
     }
-};
+}
 

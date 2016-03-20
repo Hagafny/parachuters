@@ -4,7 +4,7 @@ import GameArea from "./js/Components/GameArea";
 import TextComponent from "./js/Components/TextComponent";
 import BaseComponent from "./js/Components/BaseComponent";
 import Boat from "./js/Components/Boat";
-import Plane from "./js/Components/Plane"
+import Plane from "./js/Components/Plane";
 import Parachuter from "./js/Components/Parachuter";
 
 import LevelService from "./js/Services/LevelService";
@@ -116,7 +116,7 @@ function removeParachuter(e) {
 
 function planeFinishedCycle() {
     planeCycles++;
-    if (planeCycles % cyclesPerLevel == 0) {
+    if (planeCycles % cyclesPerLevel === 0) {
         levelService.levelUp();
         plane.parachutersPerCycle = levelService.level;
     }

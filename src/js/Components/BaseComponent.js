@@ -7,11 +7,11 @@
 export default class BaseComponent {
     constructor(settings) {
         // Validate
-        if (settings.width == undefined ||
-            settings.height == undefined ||
-            settings.x == undefined ||
-            settings.y == undefined ||
-            settings.image == undefined)
+        if (settings.width === undefined ||
+            settings.height === undefined ||
+            settings.x === undefined ||
+            settings.y === undefined ||
+            settings.image === undefined)
             throw Error("Invalid settings for component");
 
         this.width = settings.width;

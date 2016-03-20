@@ -17,10 +17,10 @@ export default class Plane extends BaseComponent {
     constructor(settings, stats) {
         super(settings);
         //Validate
-        if (settings.gameWidth == undefined)
+        if (settings.gameWidth === undefined)
             throw Error("Invalid settings for Plane component");
 
-        stats = stats || {}
+        stats = stats || {};
         this.speed = stats.speed || 3;
         this.parachutersPerCycle = stats.parachutersPerCycle || 1;
         this.gameWidth = settings.gameWidth;
@@ -90,10 +90,10 @@ export default class Plane extends BaseComponent {
     // Also, we have to make sure the plane will start at a coordinate that is divided by the speed. This is to make sure the plane will hit all his deploymentXLocations. 
     // This is why we run a while loop until we generate a location that can can be divided by the plane's speedn./
     getNewPlaneLocation() {
-        var distance
+        var distance;
         do {
             distance = Math.floor(Math.random() * this.gameWidth);
-        } while ((this.gameWidth + distance) % this.speed != 0);
+        } while ((this.gameWidth + distance) % this.speed !== 0);
 
         return this.gameWidth + distance;
     }

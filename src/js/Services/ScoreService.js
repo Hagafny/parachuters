@@ -20,7 +20,7 @@ export default class ScoreService {
     }
 
     listenToEvents() {
-        document.body.addEventListener("hitsBoat", (e) => { this.addScore(e.detail.reward)}, false); //Listen to the hitsBoat event and fire an addScore function.
+        document.body.addEventListener("hitsBoat", (e) => { this.addScore(e.detail.reward); }, false); //Listen to the hitsBoat event and fire an addScore function.
     }
 
 
