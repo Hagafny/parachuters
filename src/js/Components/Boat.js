@@ -5,7 +5,7 @@
 * @constructor
 */
 import BaseComponent from "./BaseComponent";
-import "./../misc/extensions"; //For the clamp/contains extensions
+import "./../misc/extensions"; //For the clamp, contains and last exstension functions 
 
 let keysPressed = [];
 export default class Boat extends BaseComponent {

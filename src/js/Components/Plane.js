@@ -5,7 +5,7 @@
 * @constructor
 */
 import BaseComponent from "./BaseComponent";
-import "./../misc/extensions"; //For the clamp/contains extensions
+import "./../misc/extensions"; //For the contains extension function
 
 //deploymentXLocations holds the x coordinates in which the plane drops parachuters. It resets every time the plane completes a cycle.
 let deploymentXLocations = [],
