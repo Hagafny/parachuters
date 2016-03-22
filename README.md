@@ -16,14 +16,14 @@ Parachuters uses a number of open source projects to work properly:
 * [node.js] - evented I/O for the backend
 * [Express] - fast node.js network app framework
 * [Webpack] - assets bundler
-* [Babel] - precompile ES2015 to plain old JS5
+* [Babel] - transpiler ES2015 to plain old JS5
 * [JSHint] - linting tool for js
 
 Parachuters itself is open source with a [public repository][para]
  on GitHub.
 
 ### Installation
-Make sure you run administrator.
+Make sure you run as administrator.
 ```sh
 $ git clone https://github.com/Pashtidot/parachuters.git
 $ cd parachuters
