@@ -6,10 +6,6 @@ app.set('port', process.env.PORT || 3000);
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.get('/', (req, res) => {
-    res.sendFile('index.html');
-});
-
 app.listen(app.get('port'), function () {
     console.log('Game is running on: ' + app.get('port'));
 });
