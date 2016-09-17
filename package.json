@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "webpack --watch",
-    "postinstall": "./node_modules/.bin/webpack --config webpack.production.config.js -p"
+    "postinstall": "webpack --config webpack.production.config.js -p"
   },
   "repository": {
     "type": "git",
