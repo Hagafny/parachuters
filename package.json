@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "webpack --watch",
-    "postinstall": "webpack --config webpack.production.config.js -p"
+    "build": "webpack --config webpack.production.config.js -p"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/Pashtidot/parachuters-game#readme",
   "dependencies": {
-    "express": "^4.13.4",
+    "express": "^4.13.4"
+  },
+  "devDependencies": {
     "webpack": "^1.12.14",
     "babel-core": "^6.7.2",
     "babel-loader": "^6.2.4",
@@ -32,6 +34,5 @@
     "strip-loader": "^0.1.2",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7"
-  },
-  "devDependencies": {}
+  }
 }
