@@ -5,8 +5,8 @@
   "main": "gameManager.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "webpack --watch",
-    "prod": "webpack --config webpack.production.config.js -p"
+    "postinstall": "webpack --config webpack.production.config.js -p",
+    "dev": "webpack --watch"
   },
   "repository": {
     "type": "git",
