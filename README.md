@@ -28,7 +28,6 @@ Make sure you run as administrator.
 $ git clone https://github.com/Pashtidot/parachuters.git
 $ cd parachuters
 $ npm install
-$ npm run prod
 $ npm start
 ```
 Open the game at the port mentioned.
