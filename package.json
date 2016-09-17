@@ -7,7 +7,7 @@
     "start": "node server.js",
     "dev": "webpack --watch",
     "prod": "webpack --config webpack.production.config.js -p",
-    "postinstall": "prod"
+    "postinstall": "webpack --config webpack.production.config.js -p"
   },
   "repository": {
     "type": "git",
